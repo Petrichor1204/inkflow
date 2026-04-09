@@ -2,20 +2,22 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.story import Story
+from app.models.user import User
 from app.schemas.story import StoryCreate, StoryResponse
+from app.auth import get_current_user
 from typing import List
 import uuid
 
 router = APIRouter(prefix="/stories", tags=["Stories"])
 
 @router.post("/", response_model=StoryResponse, status_code=201)
-def create_story(story: StoryCreate, lead_author_id: uuid.UUID, db: Session = Depends(get_db)):
+def create_story(story: StoryCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     new_story = Story(
         id=uuid.uuid4(),
         title=story.title,
         description=story.description,
         genre=story.genre,
-        lead_author_id=lead_author_id
+        lead_author_id=current_user.id
     )
     db.add(new_story)
     db.commit()
