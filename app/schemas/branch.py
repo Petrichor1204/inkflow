@@ -11,6 +11,7 @@ class BranchStatusUpdate(BaseModel):
     status: BranchStatus
     feedback: Optional[str] = None
 
+# feedback is null at creation time — frontend should conditionally render it
 class BranchResponse(BaseModel):
     id: UUID
     body: str

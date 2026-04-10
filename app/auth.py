@@ -44,3 +44,19 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
     return user
+
+def require_lead_author(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role != "lead_author":
+        raise HTTPException(
+            status_code=403,
+            detail="Only lead authors can perform this action"
+        )
+    return current_user
+
+def require_contributor(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role != "contributor":
+        raise HTTPException(
+            status_code=403,
+            detail="Only contributors can perform this action"
+        )
+    return current_user

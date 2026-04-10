@@ -4,14 +4,14 @@ from app.database import get_db
 from app.models.story import Story
 from app.models.user import User
 from app.schemas.story import StoryCreate, StoryResponse
-from app.auth import get_current_user
+from app.auth import require_lead_author
 from typing import List
 import uuid
 
 router = APIRouter(prefix="/stories", tags=["Stories"])
 
 @router.post("/", response_model=StoryResponse, status_code=201)
-def create_story(story: StoryCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def create_story(story: StoryCreate, db: Session = Depends(get_db), current_user: User = Depends(require_lead_author)):
     new_story = Story(
         id=uuid.uuid4(),
         title=story.title,
@@ -37,7 +37,7 @@ def get_story(story_id: uuid.UUID, db: Session = Depends(get_db)):
     return story
 
 @router.delete("/{story_id}", status_code=204)
-def delete_story(story_id: uuid.UUID, db: Session = Depends(get_db)):
+def delete_story(story_id: uuid.UUID, db: Session = Depends(get_db),  current_user: User = Depends(require_lead_author)):
     story = db.query(Story).filter(Story.id == story_id).first()
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
