@@ -12,4 +12,15 @@ client.interceptors.request.use((config) => {
     return config
 })
 
+// update frontend to store and use current user
+export function decodeToken() {
+    const token = localStorage.getItem("token")
+    if (!token) return null
+    try {
+        const payload = token.split(".")[1]
+        return JSON.parse(atob(payload))
+    } catch {
+        return null
+    }
+}
 export default client

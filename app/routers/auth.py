@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import LoginRequest, TokenResponse
-from app.auth import verify_password, create_access_token, hash_password
+from app.auth import verify_password, create_access_token, hash_password, get_current_user
 from app.schemas.user import UserCreate, UserResponse
 import uuid
 
@@ -35,3 +35,8 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 
     token = create_access_token({"sub": str(user.id), "role": user.role})
     return TokenResponse(access_token=token)
+
+# exposes current user's data
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
