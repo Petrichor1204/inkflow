@@ -2,6 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Stories from "./pages/Stories"
+import StoryDetail from "./pages/StoryDetail"
+import BranchEditor from "./pages/BranchEditor"
+import ReviewDashboard from "./pages/ReviewDashboard"
+
+// inside Routes add:
+<Route path="/review" element={
+    <ProtectedRoute>
+        <ReviewDashboard />
+    </ProtectedRoute>
+} />
+
 
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem("token")
@@ -20,6 +31,21 @@ function App() {
                         <Stories />
                     </ProtectedRoute>
                 } />
+                <Route path="/stories/:storyId" element={
+                    <ProtectedRoute>
+                        <StoryDetail />
+                    </ProtectedRoute>
+                } />
+                <Route path="/chapters/:chapterId/branch" element={
+                    <ProtectedRoute>
+                        <BranchEditor />
+                    </ProtectedRoute>
+                } />
+                <Route path="/review" element={
+                    <ProtectedRoute>
+                        <ReviewDashboard />
+                    </ProtectedRoute>
+} />
                 <Route path="/" element={<Navigate to="/stories" />} />
             </Routes>
         </BrowserRouter>

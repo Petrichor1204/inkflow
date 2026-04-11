@@ -21,7 +21,7 @@ function Login() {
 
     return (
         <div style={{ maxWidth: 400, margin: "100px auto", padding: "2rem" }}>
-            <h1 style={{ marginBottom: "1.5rem" }}>InkFlow</h1>
+            <h1 style={{ marginBottom: "1.5rem" }}>Kinyurite</h1>
             <h2 style={{ marginBottom: "1rem", fontWeight: 400 }}>Sign in</h2>
             {error && <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>}
             <form onSubmit={handleSubmit}>

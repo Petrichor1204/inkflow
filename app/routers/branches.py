@@ -81,3 +81,40 @@ def update_branch_status(chapter_id: uuid.UUID, branch_id: uuid.UUID, update: Br
     db.commit()
     db.refresh(branch)
     return branch
+
+@router.get("/review/pending", tags=["Branches"])
+def get_pending_branches(db: Session = Depends(get_db), current_user: User = Depends(require_lead_author)):
+    stories = db.query(Story).filter(Story.lead_author_id == current_user.id).all()
+    story_ids = [s.id for s in stories]
+    
+    chapters = db.query(Chapter).filter(Chapter.story_id.in_(story_ids)).all()
+    chapter_ids = [c.id for c in chapters]
+    
+    branches = db.query(ChapterBranch).filter(
+        ChapterBranch.chapter_id.in_(chapter_ids),
+        ChapterBranch.status.in_([BranchStatus.SUBMITTED, BranchStatus.UNDER_REVIEW])
+    ).all()
+
+    result = []
+    chapter_map = {c.id: c for c in chapters}
+    story_map = {s.id: s for s in stories}
+
+    for branch in branches:
+        chapter = chapter_map[branch.chapter_id]
+        story = story_map[chapter.story_id]
+        result.append({
+            "branch_id": branch.id,
+            "branch_status": branch.status.value,
+            "branch_body": branch.body,
+            "branch_created_at": branch.created_at,
+            "branch_updated_at": branch.updated_at,
+            "contributor_id": branch.contributor_id,
+            "chapter_id": chapter.id,
+            "chapter_title": chapter.title,
+            "chapter_body": chapter.body,
+            "story_id": story.id,
+            "story_title": story.title,
+            "feedback": branch.feedback
+        })
+
+    return result

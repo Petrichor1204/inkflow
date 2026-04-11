@@ -45,12 +45,15 @@ function Stories() {
     return (
         <div style={{ maxWidth: 800, margin: "0 auto", padding: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-                <h1>InkFlow</h1>
+                <h1>Kinyurite</h1>
                 <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                     {currentUser && (
                         <span style={{ fontSize: 14, color: "#888" }}>
                             {currentUser.username} · {currentUser.role}
                         </span>
+                    )}
+                    {currentUser?.role === "lead_author" && (
+                        <button onClick={() => navigate("/review")}>Review dashboard</button>
                     )}
                     <button onClick={handleLogout}>Sign out</button>
                 </div>
@@ -98,7 +101,7 @@ function Stories() {
 
             {stories.length === 0 && <p>No stories yet.</p>}
             {stories.map(story => (
-                <div key={story.id} style={{
+                <div key={story.id} onClick={() => navigate(`/stories/${story.id}`)} style={{
                     border: "1px solid #eee",
                     borderRadius: 8,
                     padding: "1rem 1.25rem",
