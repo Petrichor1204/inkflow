@@ -6,7 +6,7 @@ from app.models.chapter import Chapter
 from app.models.story import Story
 from app.models.user import User
 from app.schemas.branch import BranchStatusUpdate, BranchResponse
-from app.auth import require_lead_author
+from app.auth import require_lead_author, get_current_user
 from typing import List
 
 router = APIRouter(prefix="/review", tags=["Review"])
@@ -72,3 +72,28 @@ def review_branch(branch_id: str, update: BranchStatusUpdate, db: Session = Depe
     db.commit()
     db.refresh(branch)
     return {"status": branch.status.value, "feedback": branch.feedback}
+
+@router.get("/my-branches")
+def get_my_branches(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    branches = db.query(ChapterBranch).filter(
+        ChapterBranch.contributor_id == current_user.id
+    ).all()
+
+    result = []
+    for branch in branches:
+        chapter = db.query(Chapter).filter(Chapter.id == branch.chapter_id).first()
+        story = db.query(Story).filter(Story.id == chapter.story_id).first()
+        result.append({
+            "branch_id": str(branch.id),
+            "branch_status": branch.status.value,
+            "branch_body": branch.body,
+            "branch_updated_at": branch.updated_at,
+            "feedback": branch.feedback,
+            "chapter_id": str(chapter.id),
+            "chapter_title": chapter.title,
+            "chapter_body": chapter.body,
+            "story_id": str(story.id),
+            "story_title": story.title
+        })
+
+    return result
