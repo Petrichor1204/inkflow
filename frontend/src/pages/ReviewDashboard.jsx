@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import client from "../api/client"
+import DiffViewer from "../components/DiffViewer"
+
 
 function ReviewDashboard() {
     const [branches, setBranches] = useState([])
@@ -91,37 +93,21 @@ function ReviewDashboard() {
                             {selected.story_title}
                         </p>
 
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
-                            <div>
-                                <p style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>Original</p>
-                                <div style={{
-                                    border: "1px solid #eee",
-                                    borderRadius: 8,
-                                    padding: "1rem",
-                                    fontSize: 14,
-                                    lineHeight: 1.7,
-                                    whiteSpace: "pre-wrap",
-                                    minHeight: 200,
-                                    color: "#444"
-                                }}>
-                                    {selected.chapter_body}
-                                </div>
+                        <div style={{ marginBottom: "1.5rem" }}>
+                            <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
+                                <span style={{ fontSize: 13, color: "#888" }}>
+                                    <span style={{ background: "#fce8e6", color: "#c5221f", padding: "2px 8px", borderRadius: 4, marginRight: 6 }}>red</span>
+                                    removed
+                                </span>
+                                <span style={{ fontSize: 13, color: "#888" }}>
+                                    <span style={{ background: "#e6f4ea", color: "#137333", padding: "2px 8px", borderRadius: 4, marginRight: 6 }}>green</span>
+                                    added
+                                </span>
                             </div>
-                            <div>
-                                <p style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>Contributor's version</p>
-                                <div style={{
-                                    border: "1px solid #eee",
-                                    borderRadius: 8,
-                                    padding: "1rem",
-                                    fontSize: 14,
-                                    lineHeight: 1.7,
-                                    whiteSpace: "pre-wrap",
-                                    minHeight: 200,
-                                    color: "#444"
-                                }}>
-                                    {selected.branch_body}
-                                </div>
-                            </div>
+                            <DiffViewer
+                                original={selected.chapter_body}
+                                modified={selected.branch_body}
+                            />
                         </div>
 
                         <div style={{ marginBottom: "1rem" }}>
