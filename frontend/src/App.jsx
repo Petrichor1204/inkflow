@@ -5,6 +5,7 @@ import Stories from "./pages/Stories"
 import StoryDetail from "./pages/StoryDetail"
 import BranchEditor from "./pages/BranchEditor"
 import ReviewDashboard from "./pages/ReviewDashboard"
+import ContributorDashboard from "./pages/ContributorDashboard"
 
 // inside Routes add:
 <Route path="/review" element={
@@ -45,8 +46,13 @@ function App() {
                     <ProtectedRoute>
                         <ReviewDashboard />
                     </ProtectedRoute>
-} />
+                } />
                 <Route path="/" element={<Navigate to="/stories" />} />
+                <Route path="/my-branches" element={
+                    <ProtectedRoute>
+                        <ContributorDashboard />
+                    </ProtectedRoute>
+                } />
             </Routes>
         </BrowserRouter>
     )

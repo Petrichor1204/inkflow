@@ -55,6 +55,9 @@ function Stories() {
                     {currentUser?.role === "lead_author" && (
                         <button onClick={() => navigate("/review")}>Review dashboard</button>
                     )}
+                    {currentUser?.role === "contributor" && (
+                        <button onClick={() => navigate("/my-branches")}>My branches</button>
+                    )}
                     <button onClick={handleLogout}>Sign out</button>
                 </div>
             </div>
