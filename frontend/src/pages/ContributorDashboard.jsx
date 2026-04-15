@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import client from "../api/client"
 
 const STATUS_STYLES = {
-    draft: { background: "#f1f3f4", color: "#444" },
-    submitted: { background: "#e8f0fe", color: "#1a73e8" },
-    under_review: { background: "#fff8e1", color: "#f9a825" },
-    merged: { background: "#e6f4ea", color: "#137333" },
-    rejected: { background: "#fce8e6", color: "#c5221f" }
+    draft: "bg-ink-100 text-ink-600 border-ink-200",
+    submitted: "bg-blue-50 text-blue-700 border-blue-200",
+    under_review: "bg-amber-50 text-amber-700 border-amber-200",
+    merged: "bg-green-50 text-green-700 border-green-200",
+    rejected: "bg-red-50 text-red-700 border-red-200"
 }
+
+const FILTERS = ["all", "draft", "submitted", "under_review", "merged", "rejected"]
 
 function ContributorDashboard() {
     const [branches, setBranches] = useState([])
@@ -22,118 +27,130 @@ function ContributorDashboard() {
                 setBranches(res.data)
                 setLoading(false)
             })
-            .catch(() => {
-                navigate("/stories")
-            })
+            .catch(() => navigate("/stories"))
     }, [])
 
     const filtered = filter === "all"
         ? branches
         : branches.filter(b => b.branch_status === filter)
 
-    if (loading) return <p style={{ padding: "2rem" }}>Loading...</p>
+    if (loading) return (
+        <div className="min-h-screen bg-ink-50 flex items-center justify-center">
+            <p className="text-ink-400 text-sm">Loading your branches...</p>
+        </div>
+    )
 
     return (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "2rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-                <h1>My branches</h1>
-                <button onClick={() => navigate("/stories")}>← Back to stories</button>
-            </div>
+        <div className="min-h-screen bg-ink-50">
+            <nav className="border-b border-ink-200 bg-white px-6 py-4">
+                <div className="max-w-4xl mx-auto flex justify-between items-center">
+                    <h1 className="font-heading text-2xl font-semibold text-ink-900">Kinyurite</h1>
+                    <Button variant="ghost" size="sm" onClick={() => navigate("/stories")}>
+                        ← Back to stories
+                    </Button>
+                </div>
+            </nav>
 
-            <div style={{ display: "flex", gap: 8, marginBottom: "1.5rem", flexWrap: "wrap" }}>
-                {["all", "draft", "submitted", "under_review", "merged", "rejected"].map(s => (
-                    <button
-                        key={s}
-                        onClick={() => setFilter(s)}
-                        style={{
-                            padding: "5px 14px",
-                            borderRadius: 20,
-                            border: filter === s ? "1.5px solid #1a73e8" : "1px solid #eee",
-                            background: filter === s ? "#e8f0fe" : "white",
-                            color: filter === s ? "#1a73e8" : "#444",
-                            cursor: "pointer",
-                            fontSize: 13
-                        }}
-                    >
-                        {s === "all" ? "All" : s.replace("_", " ")}
-                    </button>
-                ))}
-            </div>
-
-            {filtered.length === 0 && (
-                <p style={{ color: "#888" }}>
-                    {filter === "all" ? "You haven't submitted any branches yet." : `No branches with status "${filter}".`}
-                </p>
-            )}
-
-            {filtered.map(branch => (
-                <div
-                    key={branch.branch_id}
-                    style={{
-                        border: "1px solid #eee",
-                        borderRadius: 8,
-                        padding: "1rem 1.25rem",
-                        marginBottom: "1rem"
-                    }}
-                >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <div>
-                            <strong style={{ fontSize: 15 }}>{branch.chapter_title}</strong>
-                            <span style={{ fontSize: 13, color: "#888", marginLeft: 8 }}>{branch.story_title}</span>
-                        </div>
-                        <span style={{
-                            fontSize: 12,
-                            padding: "3px 12px",
-                            borderRadius: 20,
-                            ...STATUS_STYLES[branch.branch_status]
-                        }}>
-                            {branch.branch_status.replace("_", " ")}
-                        </span>
-                    </div>
-
-                    <p style={{ margin: 0, fontSize: 14, color: "#555", marginBottom: 8 }}>
-                        {branch.branch_body.length > 150
-                            ? branch.branch_body.slice(0, 150) + "..."
-                            : branch.branch_body}
+            <main className="max-w-4xl mx-auto px-6 py-8">
+                <div className="mb-8">
+                    <h2 className="font-heading text-3xl text-ink-900 mb-1">My branches</h2>
+                    <p className="text-ink-400 text-sm">
+                        {branches.length} {branches.length === 1 ? "branch" : "branches"} total
                     </p>
+                </div>
 
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: 12, color: "#aaa" }}>
-                            Updated {new Date(branch.branch_updated_at).toLocaleDateString()}
-                        </span>
-                        {branch.branch_status === "draft" && (
-                            <button
-                                onClick={() => navigate(`/chapters/${branch.chapter_id}/branch`, {
-                                    state: {
-                                        chapter: {
-                                            id: branch.chapter_id,
-                                            title: branch.chapter_title,
-                                            body: branch.chapter_body
-                                        },
-                                        storyId: branch.story_id
-                                    }
-                                })}
-                                style={{ fontSize: 13 }}
-                            >
-                                Continue editing →
-                            </button>
+                <div className="flex gap-2 flex-wrap mb-6">
+                    {FILTERS.map(f => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                                filter === f
+                                    ? "bg-ink-900 text-white border-ink-900"
+                                    : "bg-white text-ink-500 border-ink-200 hover:border-ink-400"
+                            }`}
+                        >
+                            {f === "all" ? "All" : f.replace("_", " ")}
+                        </button>
+                    ))}
+                </div>
+
+                <Separator className="mb-6" />
+
+                {filtered.length === 0 && (
+                    <div className="text-center py-20">
+                        <p className="font-heading text-xl text-ink-400">
+                            {filter === "all" ? "No branches yet." : `No ${filter.replace("_", " ")} branches.`}
+                        </p>
+                        {filter === "all" && (
+                            <p className="text-ink-300 text-sm mt-2">
+                                Find a story and start contributing.
+                            </p>
                         )}
                     </div>
+                )}
 
-                    {branch.feedback && (
-                        <div style={{
-                            marginTop: 10,
-                            background: "#fff8e1",
-                            border: "1px solid #ffe082",
-                            borderRadius: 6,
-                            padding: "0.75rem 1rem",
-                            fontSize: 14
-                        }}>
-                            <strong>Feedback:</strong> {branch.feedback}
-                        </div>
-                    )}
+                <div className="space-y-3">
+                    {filtered.map(branch => (
+                        <Card key={branch.branch_id} className="border-ink-200 bg-ink-50">
+                            <CardContent className="pt-4 pb-4">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <p className="font-heading text-base text-ink-900">
+                                            {branch.chapter_title}
+                                        </p>
+                                        <p className="text-xs text-ink-400 mt-0.5">
+                                            {branch.story_title}
+                                        </p>
+                                    </div>
+                                    <span className={`text-xs px-2.5 py-0.5 rounded-full border ${STATUS_STYLES[branch.branch_status]}`}>
+                                        {branch.branch_status.replace("_", " ")}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-ink-500 leading-relaxed mb-2">
+                                    {branch.branch_body.length > 150
+                                        ? branch.branch_body.slice(0, 150) + "..."
+                                        : branch.branch_body}
+                                </p>
+
+                                {branch.feedback && (
+                                    <div className="bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-2">
+                                        <p className="text-xs text-amber-800">
+                                            <span className="font-medium">Feedback: </span>
+                                            {branch.feedback}
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div className="flex justify-between items-center">
+                                    <span className="text-xs text-ink-300">
+                                        Updated {new Date(branch.branch_updated_at).toLocaleDateString()}
+                                    </span>
+                                    {branch.branch_status === "draft" && (
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => navigate(`/chapters/${branch.chapter_id}/branch`, {
+                                                state: {
+                                                    chapter: {
+                                                        id: branch.chapter_id,
+                                                        title: branch.chapter_title,
+                                                        body: branch.chapter_body
+                                                    },
+                                                    storyId: branch.story_id
+                                                }
+                                            })}
+                                        >
+                                            Continue editing →
+                                        </Button>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
-            ))}
+            </main>
         </div>
     )
 }
