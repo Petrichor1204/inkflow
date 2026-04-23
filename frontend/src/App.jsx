@@ -7,14 +7,6 @@ import BranchEditor from "./pages/BranchEditor"
 import ReviewDashboard from "./pages/ReviewDashboard"
 import ContributorDashboard from "./pages/ContributorDashboard"
 
-// inside Routes add:
-<Route path="/review" element={
-    <ProtectedRoute>
-        <ReviewDashboard />
-    </ProtectedRoute>
-} />
-
-
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem("token")
     if (!token) return <Navigate to="/login" />
