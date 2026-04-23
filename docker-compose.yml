@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15.1-alpine
+    environment:
+      POSTGRES_USER: abrokwa
+      POSTGRES_DB: inkflow
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://abrokwa@db:5432/inkflow
+      SECRET_KEY: ${SECRET_KEY}
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
