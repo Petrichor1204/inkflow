@@ -15,7 +15,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://kinyurite-backend.onrender.com",
         "https://kinyurite.vercel.app",
     ],
     allow_credentials=True,
