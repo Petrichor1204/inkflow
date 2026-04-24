@@ -8,7 +8,7 @@ import DiffViewer from "../components/DiffViewer"
 import client from "../api/client"
 
 const STATUS_STYLES = {
-    submitted: "bg-blue-50 text-blue-700 border-blue-200",
+    submitted: "bg-sky-50 text-sky-700 border-sky-200",
     under_review: "bg-amber-50 text-amber-700 border-amber-200",
 }
 
@@ -64,8 +64,8 @@ function ReviewDashboard() {
                 </div>
             </nav>
 
-            <main className="max-w-6xl mx-auto px-6 py-8">
-                <div className="mb-8">
+            <main className="max-w-6xl mx-auto px-6 py-10">
+                <div className="mb-8 pt-4">
                     <h2 className="font-heading text-3xl text-ink-900 mb-1">Review dashboard</h2>
                     <p className="text-ink-400 text-sm">
                         {branches.length} {branches.length === 1 ? "branch" : "branches"} awaiting review

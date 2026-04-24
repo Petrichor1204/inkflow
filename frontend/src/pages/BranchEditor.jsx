@@ -7,7 +7,7 @@ import client from "../api/client"
 
 const STATUS_STYLES = {
     draft: "bg-ink-100 text-ink-600",
-    submitted: "bg-blue-50 text-blue-700",
+    submitted: "bg-sky-50 text-sky-700",
     under_review: "bg-amber-50 text-amber-700",
     merged: "bg-green-50 text-green-700",
     rejected: "bg-red-50 text-red-700"

@@ -7,7 +7,7 @@ import client from "../api/client"
 
 const STATUS_STYLES = {
     draft: "bg-ink-100 text-ink-600 border-ink-200",
-    submitted: "bg-blue-50 text-blue-700 border-blue-200",
+    submitted: "bg-sky-50 text-sky-700 border-sky-200",
     under_review: "bg-amber-50 text-amber-700 border-amber-200",
     merged: "bg-green-50 text-green-700 border-green-200",
     rejected: "bg-red-50 text-red-700 border-red-200"
@@ -51,8 +51,8 @@ function ContributorDashboard() {
                 </div>
             </nav>
 
-            <main className="max-w-4xl mx-auto px-6 py-8">
-                <div className="mb-8">
+            <main className="max-w-4xl mx-auto px-6 py-10">
+                <div className="mb-8 pt-4">
                     <h2 className="font-heading text-3xl text-ink-900 mb-1">My branches</h2>
                     <p className="text-ink-400 text-sm">
                         {branches.length} {branches.length === 1 ? "branch" : "branches"} total
